@@ -8,10 +8,8 @@
 </head>
 <body>
 <div class="container" style="padding:20px;">
-	<h1 style="text-align:center;">
-		<a href="/register"> Cadastro de Estudantes </a>
-	</h1>
-	<hr>
+		<h1 style="text-align:center;"> Cadastro de Estudantes</h1>
+		<hr>
 
   <div id="main-register"></div>
   <script src="/js/app.js"></script>

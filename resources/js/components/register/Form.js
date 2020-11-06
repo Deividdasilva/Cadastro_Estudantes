@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 
 import registerServices from "../../services/Register";
 
+import { cpf } from 'cpf-cnpj-validator'; 
 
-  
 
 function Form(){
 
@@ -34,6 +34,18 @@ function Form(){
         { name: "9° Ano", value: 9 }
   ];
 
+
+  const handleCpf = (value) => {
+      
+    let result = cpf.isValid(value);  
+    if (!result) {  
+        console.log('CPF não é válido'); 
+    } else if (result){
+        setCpfMother(value)
+    }
+    //console.log(result); 
+    //console.log(value);    
+}
 
     const saveRegister = async () => {
 
@@ -94,8 +106,6 @@ function Form(){
                     
 				</select>
 	  </div>
-
-     
 
       <div className="col-md-2">
                 <label htmlFor="cep">CEP*</label>
@@ -174,7 +184,7 @@ function Form(){
                 <input 
                     className="form-control"
                     type="text"
-                    onChange={(event)=>setCpfMother(event.target.value)}
+                    onChange={(event)=>handleCpf(event.target.value)}
                     
                 />
       </div>

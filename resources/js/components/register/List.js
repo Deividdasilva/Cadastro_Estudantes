@@ -47,10 +47,10 @@ function List(){
       <table class="table" text="align-center">
         <thead class="thead-dark">
           <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Registro</th>
             <th scope="col">Nome</th>
             <th scope="col">Data Nascimento</th>
-            <th scope="col">Serie de Ingresso</th>
+            <th scope="col">Cidade</th>
             <th scope="col">Nome da mãe</th>
             <th scope="col">Data Pagamento</th>
             <th scope="col">Action</th>
@@ -65,7 +65,7 @@ function List(){
                   <th scope="row">{i}</th>
                   <td>{item.name_lastname}</td>
                   <td>{item.date_birth}</td>
-                  <td>{item.series}</td>
+                  <td>{item.city}</td>
                   <td>{item.name_mother}</td>
                   <td>{item.date_payment}</td>
                   <td>

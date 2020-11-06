@@ -25,6 +25,9 @@
         "sass-loader": "^8.0.0"
     },
     "dependencies": {
+        "@brazilian-utils/is-valid-cep": "^0.1.2",
+        "br-validator": "^4.1.0",
+        "cpf-cnpj-validator": "^1.0.3",
         "react-router-dom": "^5.2.0"
     }
 }

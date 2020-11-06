@@ -62,10 +62,7 @@ class RegisterController extends Controller
 
         try{
 
-            //$id  = Input::get('id') ;
-           
-            $data = Register::get($id);
-            //$data = Register::find($id);
+            $data = Register::find($id);
 
             if ($data) {
                 $response['data'] = $data;

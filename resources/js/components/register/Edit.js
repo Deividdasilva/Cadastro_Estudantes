@@ -92,7 +92,6 @@ function Edit(props){
                     className="form-control"
                     name="dateBirth"
                     value={dateBirth}
-                    id="dateBirth"
                     type="date"
                     onChange={(event)=>setDateBirth(event.target.value)}
                 />

@@ -6414,6 +6414,189 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/cpf-cnpj-validator/dist/cpf-cnpj-validator.es.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/cpf-cnpj-validator/dist/cpf-cnpj-validator.es.js ***!
+  \***********************************************************************/
+/*! exports provided: default, cpf, cnpj, validator */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cpf", function() { return cpf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cnpj", function() { return cnpj; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "validator", function() { return validator; });
+/*!
+ * cpf-cnpj-validator v1.0.3
+ * (c) 2020-present Carvalho, Vinicius Luiz <carvalho.viniciusluiz@gmail.com>
+ * Released under the MIT License.
+ */
+const BLACKLIST = [
+    '00000000000',
+    '11111111111',
+    '22222222222',
+    '33333333333',
+    '44444444444',
+    '55555555555',
+    '66666666666',
+    '77777777777',
+    '88888888888',
+    '99999999999',
+    '12345678909'
+];
+const STRICT_STRIP_REGEX = /[.-]/g;
+const LOOSE_STRIP_REGEX = /[^\d]/g;
+const verifierDigit = (digits) => {
+    const numbers = digits
+        .split('')
+        .map(number => {
+        return parseInt(number, 10);
+    });
+    const modulus = numbers.length + 1;
+    const multiplied = numbers.map((number, index) => number * (modulus - index));
+    const mod = multiplied.reduce((buffer, number) => buffer + number) % 11;
+    return (mod < 2 ? 0 : 11 - mod);
+};
+const strip = (number, strict) => {
+    const regex = strict ? STRICT_STRIP_REGEX : LOOSE_STRIP_REGEX;
+    return (number || '').replace(regex, '');
+};
+const format = (number) => {
+    return strip(number).replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+};
+const isValid = (number, strict) => {
+    const stripped = strip(number, strict);
+    if (!stripped) {
+        return false;
+    }
+    if (stripped.length !== 11) {
+        return false;
+    }
+    if (BLACKLIST.includes(stripped)) {
+        return false;
+    }
+    let numbers = stripped.substr(0, 9);
+    numbers += verifierDigit(numbers);
+    numbers += verifierDigit(numbers);
+    return numbers.substr(-2) === stripped.substr(-2);
+};
+const generate = (formatted) => {
+    let numbers = '';
+    for (let i = 0; i < 9; i += 1) {
+        numbers += Math.floor(Math.random() * 9);
+    }
+    numbers += verifierDigit(numbers);
+    numbers += verifierDigit(numbers);
+    return (formatted ? format(numbers) : numbers);
+};
+var cpf = {
+    verifierDigit,
+    strip,
+    format,
+    isValid,
+    generate,
+};
+
+const BLACKLIST$1 = [
+    '00000000000000',
+    '11111111111111',
+    '22222222222222',
+    '33333333333333',
+    '44444444444444',
+    '55555555555555',
+    '66666666666666',
+    '77777777777777',
+    '88888888888888',
+    '99999999999999'
+];
+const STRICT_STRIP_REGEX$1 = /[-\\/.]/g;
+const LOOSE_STRIP_REGEX$1 = /[^\d]/g;
+const verifierDigit$1 = (digits) => {
+    let index = 2;
+    const reverse = digits.split('').reduce((buffer, number) => {
+        return [parseInt(number, 10)].concat(buffer);
+    }, []);
+    const sum = reverse.reduce((buffer, number) => {
+        buffer += number * index;
+        index = (index === 9 ? 2 : index + 1);
+        return buffer;
+    }, 0);
+    const mod = sum % 11;
+    return (mod < 2 ? 0 : 11 - mod);
+};
+const strip$1 = (number, strict) => {
+    const regex = strict ? STRICT_STRIP_REGEX$1 : LOOSE_STRIP_REGEX$1;
+    return (number || '').replace(regex, '');
+};
+const format$1 = (number) => {
+    return strip$1(number).replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+};
+const isValid$1 = (number, strict) => {
+    const stripped = strip$1(number, strict);
+    if (!stripped) {
+        return false;
+    }
+    if (stripped.length !== 14) {
+        return false;
+    }
+    if (BLACKLIST$1.includes(stripped)) {
+        return false;
+    }
+    let numbers = stripped.substr(0, 12);
+    numbers += verifierDigit$1(numbers);
+    numbers += verifierDigit$1(numbers);
+    return numbers.substr(-2) === stripped.substr(-2);
+};
+const generate$1 = (formatted) => {
+    let numbers = '';
+    for (let i = 0; i < 12; i += 1) {
+        numbers += Math.floor(Math.random() * 9);
+    }
+    numbers += verifierDigit$1(numbers);
+    numbers += verifierDigit$1(numbers);
+    return (formatted ? format$1(numbers) : numbers);
+};
+var cnpj = {
+    verifierDigit: verifierDigit$1,
+    strip: strip$1,
+    format: format$1,
+    isValid: isValid$1,
+    generate: generate$1
+};
+
+const validator = joi => ({
+    type: 'document',
+    base: joi.string(),
+    messages: {
+        'document.cpf': 'CPF inválido',
+        'document.cnpj': 'CNPJ inválido'
+    },
+    rules: {
+        cpf: {
+            validate(value, helpers, args, options) {
+                if (!cpf.isValid(value)) {
+                    return helpers.error('document.cpf');
+                }
+                return value;
+            }
+        },
+        cnpj: {
+            validate(value, helpers, args, options) {
+                if (!cnpj.isValid(value)) {
+                    return helpers.error('document.cnpj');
+                }
+                return value;
+            }
+        }
+    }
+});
+
+/* harmony default export */ __webpack_exports__["default"] = (validator);
+
+
+
+/***/ }),
+
 /***/ "./node_modules/history/esm/history.js":
 /*!*********************************************!*\
   !*** ./node_modules/history/esm/history.js ***!
@@ -70765,7 +70948,7 @@ var Nav = /*#__PURE__*/function (_Component) {
     key: "render",
     value: function render() {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("nav", {
-        "class": "navbar navbar-expand-lg navbar-light bg-light rounded"
+        "class": "navbar navbar-expand-sm bg-dark navbar-dark"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         "class": "collapse navbar-collapse",
         id: "navbarsExample09"
@@ -70776,7 +70959,7 @@ var Nav = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
         "class": "nav-link",
         to: "/register/index"
-      }, "Estudantes  ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+      }, "Estudantes")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         "class": "nav-item"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
         "class": "nav-link",
@@ -70785,7 +70968,7 @@ var Nav = /*#__PURE__*/function (_Component) {
         "class": "nav-item"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
         "class": "nav-link",
-        to: "/register/edit/5"
+        to: "/register/edit/${id}"
       }, "Alterar")))));
     }
   }]);
@@ -71026,7 +71209,6 @@ function Edit(props) {
     className: "form-control",
     name: "dateBirth",
     value: dateBirth,
-    id: "dateBirth",
     type: "date",
     onChange: function onChange(event) {
       return setDateBirth(event.target.value);
@@ -71192,6 +71374,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _services_Register__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/Register */ "./resources/js/services/Register.js");
+/* harmony import */ var cpf_cnpj_validator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! cpf-cnpj-validator */ "./node_modules/cpf-cnpj-validator/dist/cpf-cnpj-validator.es.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -71209,6 +71392,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -71307,6 +71491,18 @@ function Form() {
     name: "9° Ano",
     value: 9
   }];
+
+  var handleCpf = function handleCpf(value) {
+    var result = cpf_cnpj_validator__WEBPACK_IMPORTED_MODULE_3__["cpf"].isValid(value);
+
+    if (!result) {
+      console.log('CPF não é válido');
+    } else if (result) {
+      setCpfMother(value);
+    } //console.log(result); 
+    //console.log(value);    
+
+  };
 
   var saveRegister = /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -71484,7 +71680,7 @@ function Form() {
     className: "form-control",
     type: "text",
     onChange: function onChange(event) {
-      return setCpfMother(event.target.value);
+      return handleCpf(event.target.value);
     }
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "col-md-3"
@@ -71635,13 +71831,13 @@ function List() {
     "class": "thead-dark"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
     scope: "col"
-  }, "ID"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
+  }, "Registro"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
     scope: "col"
   }, "Nome"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
     scope: "col"
   }, "Data Nascimento"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
     scope: "col"
-  }, "Serie de Ingresso"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
+  }, "Cidade"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
     scope: "col"
   }, "Nome da m\xE3e"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
     scope: "col"
@@ -71650,7 +71846,7 @@ function List() {
   }, "Action"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tbody", null, listRegister.map(function (item, i) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("tr", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("th", {
       scope: "row"
-    }, i), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.name_lastname), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.date_birth), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.series), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.name_mother), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.date_payment), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
+    }, i), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.name_lastname), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.date_birth), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.city), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.name_mother), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, item.date_payment), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("td", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
       to: "/register/edit/" + item.id,
       "class": "btn btn-warning"
     }, " Edit "), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("a", {
